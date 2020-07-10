@@ -71,7 +71,7 @@
 
 ### フィードバック
 
-```
+```graphql
 {
   feedbacks {
     staffId
