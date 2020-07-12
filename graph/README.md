@@ -10,6 +10,12 @@
 
 トークンは、LoBeam の [管理者コンソール](https://lo-beam.com/manager/api) から取得できます。
 
+## スキーマ
+
+GraphQL Introspection に対応しており、クエリーを通じて取得可能です。 詳しくは下記の URL を参照してください。
+
+https://graphql.org/learn/introspection/
+
 ## サンプルクエリ
 
 ### スタッフ
