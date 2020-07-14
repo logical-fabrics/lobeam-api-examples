@@ -1,30 +1,39 @@
 const createError = require('http-errors')
 const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 const logger = require('morgan')
-
-const indexRouter = require('./routes/index')
-const dispatchedRouter = require('./routes/dispatched')
-const arrivedRouter = require('./routes/arrived')
-const doneRouter = require('./routes/done')
+const jwt = require('jsonwebtoken')
 
 const app = express()
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'jade')
-
 app.use(logger('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+// app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.text())
 
-app.use('/', indexRouter)
-app.use('/dispatched', dispatchedRouter)
-app.use('/arrived', arrivedRouter)
-app.use('/done', doneRouter)
+// この値を LoBeam 上で設定されたパスフレーズに書き換えてください
+const PASSPHRASE = 'YOUR_PASSPHRASE'
+
+//
+// HTTP Callout Endpoint
+//
+app.post('/', async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.body, PASSPHRASE) // パスフレーズの検証
+    console.log(decoded)
+    res.json({
+      result: 'OK',
+      decoded,
+      posted: req.body,
+    })
+  } catch (e) {
+    console.log('検証失敗： パスフレーズが一致しません')
+    res.status(400).json({
+      result: 'NG',
+      posted: req.body,
+    })
+  }
+})
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
