@@ -12,8 +12,14 @@ app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.text())
 
 // LoBeam 上で設定されたパスフレーズを環境変数 PHASSPHASE に設定してください
-const PASSPHRASE = process.env.PASSPHRASE || ''
-const FILE_PATH = process.env.OUTPUT_PATH || './callout.log'
+const { PASSPHRASE, OUTPUT_PATH } = process.env
+
+if (!PASSPHRASE) {
+  console.error(
+    'パスフレーズが設定されていません。 環境変数 PASSPHRASE を設定してください。'
+  )
+  process.exit(1)
+}
 
 //
 // HTTP Callout Endpoint
@@ -31,7 +37,8 @@ app.post('/', async (req, res) => {
     })
   }
 
-  fs.appendFileSync(FILE_PATH, JSON.stringify(decoded) + '\n', 'utf8')
+  if (OUTPUT_PATH)
+    fs.appendFileSync(OUTPUT_PATH, JSON.stringify(decoded) + '\n', 'utf8')
   res.json({ result: 'OK' })
 })
 
